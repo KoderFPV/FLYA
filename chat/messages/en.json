@@ -1,0 +1,7 @@
+{
+  Chat: {
+    welcomeMessage: "Welcome I am Artur!",
+    inputPlaceholder: "What are you looking for, friend?",
+    sendButton: "Send",
+  },
+}
