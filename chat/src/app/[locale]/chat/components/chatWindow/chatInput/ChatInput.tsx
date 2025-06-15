@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './ChatBubble.module.css';
+import styles from './ChatInput.module.scss';
 import { IMessage, ROLE } from '@/interfaces';
 import { useTranslations } from 'next-intl';
 

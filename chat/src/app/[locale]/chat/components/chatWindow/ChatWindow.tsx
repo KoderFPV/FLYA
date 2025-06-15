@@ -1,5 +1,6 @@
+"use client";
 import React from 'react';
-import styles from './ChatWindow.module.css';
+import styles from './ChatWindow.module.scss';
 import { useChat } from '../../hooks/useChat';
 import { ChatInput } from './chatInput/ChatInput';
 import { ChatMessages } from './chatMessages/ChatMessages';

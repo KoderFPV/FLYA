@@ -1,6 +1,7 @@
 import React from 'react';
-import styles from './ChatMessages.module.css';
+import styles from './ChatMessages.module.scss';
 import { IMessage } from '@/interfaces';
+import { ChatBubble } from './chatBubble/ChatBubble';
 
 interface ChatMessages {
   messages: IMessage[];

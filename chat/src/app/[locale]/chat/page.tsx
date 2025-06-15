@@ -1,7 +1,6 @@
-import { ChatWindow } from "@/components/chatWindow/ChatWindow";
+import { ChatWindow } from "./components/chatWindow/ChatWindow";
 
-const Chat = () => {
+export const Chat = () => {
   return <ChatWindow />
 }
 
-export default Chat;

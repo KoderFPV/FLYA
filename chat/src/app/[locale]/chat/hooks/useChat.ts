@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { IMessage, ROLE } from "@/interfaces";
 import { useTranslations } from "next-intl";

@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './ChatBubble.module.css';
+import styles from './ChatBubble.module.scss';
 import { ROLE } from '@/interfaces';
 
 interface ChatBubbleProps {
