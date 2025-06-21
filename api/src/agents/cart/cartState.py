@@ -1,11 +1,11 @@
 
 from decimal import Decimal
-from typing import Annotated, Sequence, TypedDict
+from typing import Annotated, Sequence
 from langchain_core.messages import BaseMessage
 from langgraph.graph.message import add_messages
 from pydantic import BaseModel, Field
 
-class ProductSchema(BaseModel): # To jest odpowiednik TypedDict, ale z walidacją
+class ProductSchema(BaseModel):
     product_id: Annotated[str, Field(min_length=6)]
     name: Annotated[str, Field(min_length=3)]
     price: Annotated[Decimal, Field(gt=Decimal('0.00'))]
