@@ -1,5 +1,4 @@
 from typing import Annotated, Sequence
-from langgraph.graph.message import add_messages
 from pydantic import BaseModel, Field
 
 
@@ -12,5 +11,4 @@ class ProductItem(BaseModel):
 
 
 class ProductsState(BaseModel):
-    messages: Annotated[Sequence[str], add_messages]
     products_list: Annotated[Sequence[ProductItem], Field()]

@@ -1,9 +1,20 @@
 
+from enum import Enum
 from langchain_google_genai import ChatGoogleGenerativeAI
 from domain.state import GlobalState
 
 
-class CartAgent:
+class Routes(Enum):
+    PRODUCT = "product"
+    PRODUCTS = "products"
+    CART = "cart"
+    CHECKOUT = "checkout"
+    INFO = "info"
+    ROUTER = "router"
+    CHAT = "chat"
+
+
+class RouterAgent:
     def __init__(self, model: str, api_key: str):
         self.model = model
         self.api_key = api_key
@@ -20,3 +31,6 @@ class CartAgent:
             max_retries=2,
             google_api_key=self.api_key,
         )
+
+    def router_conditional_edge(self, state: GlobalState):
+        return Routes.CHAT.value

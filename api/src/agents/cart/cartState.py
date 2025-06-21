@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 from domain.cart import CartProduct
 
 
-class ChatState(BaseModel):
+class CartState(BaseModel):
     messages: Annotated[Sequence[BaseMessage], add_messages]
     cartItems: list[CartProduct]
     cartTotal: Annotated[Decimal, Field(gt=Decimal('0.00'))]

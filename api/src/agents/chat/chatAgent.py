@@ -1,9 +1,8 @@
-
 from langchain_google_genai import ChatGoogleGenerativeAI
 from domain.state import GlobalState
 
 
-class CartAgent:
+class ChatAgent:
     def __init__(self, model: str, api_key: str):
         self.model = model
         self.api_key = api_key

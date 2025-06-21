@@ -1,6 +1,5 @@
 from enum import Enum
-from typing import Annotated, Sequence
-from langgraph.graph.message import add_messages
+from typing import Annotated
 from pydantic import BaseModel, Field
 
 
@@ -13,6 +12,5 @@ class InfoPage(Enum):
 
 
 class InfoState(BaseModel):
-    messages: Annotated[Sequence[str], add_messages]
     page_type: Annotated[InfoPage, Field(default=None)]
     page_content: Annotated[str, Field(default="")]

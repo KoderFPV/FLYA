@@ -1,5 +1,5 @@
 import os
-from agent.agent import Agent
+from agents.agents import Agents
 from server.server import Server
 from dotenv import load_dotenv
 from config.config import Config
@@ -11,13 +11,13 @@ config = Config(
     chat_api_key=os.getenv("CHAT_MODEL_API_KEY") or "",
 )
 
-agent = Agent(
+agents = Agents(
     config.chat_model,
     config.chat_api_key
 )
 
 server = Server(
-    agent=agent
+    agents=agents
 )
 
 app = server.get_app()
