@@ -1,4 +1,5 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
+from agents.products.productsTools import ProductsTools
 from domain.state import GlobalState
 
 
@@ -18,4 +19,4 @@ class ProductsAgent:
             temperature=1.0,
             max_retries=2,
             google_api_key=self.api_key,
-        )
+        ).bind_tools(ProductsTools)

@@ -1,6 +1,8 @@
 import asyncio
-from typing import AsyncGenerator
+from enum import Enum
+from typing import Any, AsyncGenerator, List, Union
 from agents.chat.chatAgent import ChatAgent
+from agents.products.productsTools import ProductsTools
 from domain.state import GlobalState
 from langgraph.constants import END, START
 from langgraph.graph import StateGraph
@@ -10,7 +12,11 @@ from agents.info.infoAgent import InfoAgent
 from agents.product.productAgent import ProductAgent
 from agents.products.productsAgent import ProductsAgent
 from agents.router.routerAgent import RouterAgent, Routes
-from IPython.display import Image, display
+from langgraph.prebuilt import ToolNode, tools_condition
+
+
+class Tools(Enum):
+    PRODUCTS = "ProductsTools"
 
 
 class Agents:
@@ -21,7 +27,10 @@ class Agents:
         self.router = RouterAgent(self.model, self.api_key)
 
         self._addNodes()
-        self._addEdges()
+        self._addToolNodes()
+
+        self._addRoutingEdges()
+        self._addProductsEdges()
 
         self.graph = self._build_graph()
         self.graph.get_graph().draw_mermaid_png(output_file_path="graph.png")
@@ -60,7 +69,12 @@ class Agents:
         self.state_graph.add_node(Routes.CHAT.value, ChatAgent(
             self.model, self.api_key).create)
 
-    def _addEdges(self):
+    def _addToolNodes(self):
+        productsToolNode = ToolNode(tools=ProductsTools)
+
+        self.state_graph.add_node(Tools.PRODUCTS.value, productsToolNode)
+
+    def _addRoutingEdges(self):
         self.state_graph.add_edge(START, Routes.ROUTER.value)
         self.state_graph.add_conditional_edges(
             Routes.ROUTER.value, self.router.router_conditional_edge, {
@@ -72,3 +86,33 @@ class Agents:
                 Routes.CHAT.value: Routes.CHAT.value,
                 END: END
             })
+
+    def _addProductsEdges(self):
+        self.state_graph.add_conditional_edges(
+            Routes.PRODUCTS.value,
+            self.custom_route_tools(Tools.PRODUCTS.value),
+            {
+                Tools.PRODUCTS.value: Tools.PRODUCTS.value,
+                END: END,
+            }
+        )
+        self.state_graph.add_edge(Tools.PRODUCTS.value, Routes.PRODUCTS.value)
+
+    def custom_route_tools(self, nodeName: str):
+        def route_tools(state: GlobalState):
+            """
+            Use in the conditional_edge to route to the ToolNode if the last message
+            has tool calls. Otherwise, route to the end.
+            """
+            if isinstance(state, list):
+                ai_message = state[-1]
+            elif messages := state.get("messages", []):
+                ai_message = messages[-1]
+            else:
+                raise ValueError(
+                    f"No messages found in input state to tool_edge: {state}")
+            if hasattr(ai_message, "tool_calls") and len(ai_message.tool_calls) > 0:
+                return nodeName
+            return END
+
+        return route_tools
