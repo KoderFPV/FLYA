@@ -2,7 +2,7 @@ import asyncio
 from typing import AsyncGenerator
 from agents.chat.chatAgent import ChatAgent
 from domain.state import GlobalState
-from langgraph.constants import START
+from langgraph.constants import END, START
 from langgraph.graph import StateGraph
 from agents.cart.cartAgent import CartAgent
 from agents.checkout.checkoutAgent import CheckoutAgent
@@ -10,6 +10,7 @@ from agents.info.infoAgent import InfoAgent
 from agents.product.productAgent import ProductAgent
 from agents.products.productsAgent import ProductsAgent
 from agents.router.routerAgent import RouterAgent, Routes
+from IPython.display import Image, display
 
 
 class Agents:
@@ -23,6 +24,7 @@ class Agents:
         self._addEdges()
 
         self.graph = self._build_graph()
+        self.graph.get_graph().draw_mermaid_png(output_file_path="graph.png")
 
     async def stream_graph_updates(
         self,
@@ -61,4 +63,12 @@ class Agents:
     def _addEdges(self):
         self.state_graph.add_edge(START, Routes.ROUTER.value)
         self.state_graph.add_conditional_edges(
-            Routes.ROUTER.value, self.router.router_conditional_edge)
+            Routes.ROUTER.value, self.router.router_conditional_edge, {
+                Routes.PRODUCT.value: Routes.PRODUCT.value,
+                Routes.PRODUCTS.value: Routes.PRODUCTS.value,
+                Routes.CART.value: Routes.CART.value,
+                Routes.CHECKOUT.value: Routes.CHECKOUT.value,
+                Routes.INFO.value: Routes.INFO.value,
+                Routes.CHAT.value: Routes.CHAT.value,
+                END: END
+            })
