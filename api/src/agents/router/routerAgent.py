@@ -58,4 +58,4 @@ class RouterAgent:
             return next_node
         else:
             print(f"Invalid next node: {next_node}. Defaulting to chat.")
-            return END
+            return Routes.CHAT.value

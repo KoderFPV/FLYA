@@ -1,7 +1,8 @@
 import asyncio
 from enum import Enum
-from typing import Any, AsyncGenerator, List, Union
+from typing import AsyncGenerator
 from agents.chat.chatAgent import ChatAgent
+from agents.product.productTools import ProductTools
 from agents.products.productsTools import ProductsTools
 from domain.state import GlobalState
 from langgraph.constants import END, START
@@ -12,11 +13,12 @@ from agents.info.infoAgent import InfoAgent
 from agents.product.productAgent import ProductAgent
 from agents.products.productsAgent import ProductsAgent
 from agents.router.routerAgent import RouterAgent, Routes
-from langgraph.prebuilt import ToolNode, tools_condition
+from langgraph.prebuilt import ToolNode
 
 
 class Tools(Enum):
-    PRODUCTS = "ProductsTools"
+    PRODUCTS = "productsTools"
+    PRODUCT = "productTools"
 
 
 class Agents:
@@ -31,6 +33,7 @@ class Agents:
 
         self._addRoutingEdges()
         self._addProductsEdges()
+        self._addProductEdges()
 
         self.graph = self._build_graph()
         self.graph.get_graph().draw_mermaid_png(output_file_path="graph.png")
@@ -71,8 +74,10 @@ class Agents:
 
     def _addToolNodes(self):
         productsToolNode = ToolNode(tools=ProductsTools)
+        productToolNode = ToolNode(tools=ProductTools)
 
         self.state_graph.add_node(Tools.PRODUCTS.value, productsToolNode)
+        self.state_graph.add_node(Tools.PRODUCT.value, productToolNode)
 
     def _addRoutingEdges(self):
         self.state_graph.add_edge(START, Routes.ROUTER.value)
@@ -84,7 +89,6 @@ class Agents:
                 Routes.CHECKOUT.value: Routes.CHECKOUT.value,
                 Routes.INFO.value: Routes.INFO.value,
                 Routes.CHAT.value: Routes.CHAT.value,
-                END: END
             })
 
     def _addProductsEdges(self):
@@ -97,6 +101,17 @@ class Agents:
             }
         )
         self.state_graph.add_edge(Tools.PRODUCTS.value, Routes.PRODUCTS.value)
+
+    def _addProductEdges(self):
+        self.state_graph.add_conditional_edges(
+            Routes.PRODUCT.value,
+            self.custom_route_tools(Tools.PRODUCT.value),
+            {
+                Tools.PRODUCT.value: Tools.PRODUCT.value,
+                END: END,
+            }
+        )
+        self.state_graph.add_edge(Tools.PRODUCT.value, Routes.PRODUCT.value)
 
     def custom_route_tools(self, nodeName: str):
         def route_tools(state: GlobalState):
