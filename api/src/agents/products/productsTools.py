@@ -58,4 +58,4 @@ def search_products(query: str, page: int = 1) -> list[str]:
     ]
 
 
-ProductsTools = [search_products]
+Products_tools = [search_products]

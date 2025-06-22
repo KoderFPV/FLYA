@@ -14,9 +14,9 @@ class Server:
             return {"Hello": "World"}
 
         @self.app.get("/chat")
-        async def chat(user_input: str):
+        async def chat(userInput: str, threadId: str):
             async def generate_updates():
-                async for update in self.agents.stream_graph_updates(user_input):
+                async for update in self.agents.stream_graph_updates(userInput, threadId):
                     yield update.encode("utf-8") + b"\n"
 
             return StreamingResponse(generate_updates(), media_type="text/event-stream")

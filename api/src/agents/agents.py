@@ -1,9 +1,12 @@
 import asyncio
 from enum import Enum
 from typing import AsyncGenerator
+from agents.cart.cartTools import Cart_tools
 from agents.chat.chatAgent import ChatAgent
-from agents.product.productTools import ProductTools
-from agents.products.productsTools import ProductsTools
+from agents.checkout.checkoutTools import Checkout_tools
+from agents.info.infoTools import Info_tools
+from agents.product.productTools import Product_tools
+from agents.products.productsTools import Products_tools
 from domain.state import GlobalState
 from langgraph.constants import END, START
 from langgraph.graph import StateGraph
@@ -14,11 +17,15 @@ from agents.product.productAgent import ProductAgent
 from agents.products.productsAgent import ProductsAgent
 from agents.router.routerAgent import RouterAgent, Routes
 from langgraph.prebuilt import ToolNode
+from langgraph.checkpoint.memory import MemorySaver
 
 
 class Tools(Enum):
-    PRODUCTS = "productsTools"
-    PRODUCT = "productTools"
+    PRODUCTS = "products_tools"
+    PRODUCT = "product_tools"
+    INFO = "info_tools"
+    CHECKOUT = "checkout_tools"
+    CART = "cart_tools"
 
 
 class Agents:
@@ -32,21 +39,23 @@ class Agents:
         self._addToolNodes()
 
         self._addRoutingEdges()
-        self._addProductsEdges()
-        self._addProductEdges()
+
+        self._addToolsEdges()
 
         self.graph = self._build_graph()
         self.graph.get_graph().draw_mermaid_png(output_file_path="graph.png")
 
     async def stream_graph_updates(
         self,
-            user_input: str) -> AsyncGenerator[str, None]:
+            user_input: str,
+            threadId: str) -> AsyncGenerator[str, None]:
         loop = asyncio.get_running_loop()
 
         def get_sync_stream_data():
+            config = {"configurable": {"thread_id": threadId}}
             for event in self.graph.stream({
-                "messages":
-                    [{"role": "user", "content": user_input}]}):
+                "messages": [{"role": "user", "content": user_input}]
+            }, config):
                 for value in event.values():
                     yield value["messages"][-1].content
 
@@ -55,7 +64,8 @@ class Agents:
             await asyncio.sleep(0.01)
 
     def _build_graph(self):
-        return self.state_graph.compile()
+        memory = MemorySaver()
+        return self.state_graph.compile(checkpointer=memory)
 
     def _addNodes(self):
         self.state_graph.add_node(Routes.ROUTER.value, self.router.create)
@@ -73,11 +83,17 @@ class Agents:
             self.model, self.api_key).create)
 
     def _addToolNodes(self):
-        productsToolNode = ToolNode(tools=ProductsTools)
-        productToolNode = ToolNode(tools=ProductTools)
+        products_tools_node = ToolNode(tools=Products_tools)
+        product_tool_node = ToolNode(tools=Product_tools)
+        info_tool_node = ToolNode(tools=Info_tools)
+        checkout_tool_node = ToolNode(tools=Checkout_tools)
+        cart_tool_node = ToolNode(tools=Cart_tools)
 
-        self.state_graph.add_node(Tools.PRODUCTS.value, productsToolNode)
-        self.state_graph.add_node(Tools.PRODUCT.value, productToolNode)
+        self.state_graph.add_node(Tools.PRODUCTS.value, products_tools_node)
+        self.state_graph.add_node(Tools.PRODUCT.value, product_tool_node)
+        self.state_graph.add_node(Tools.INFO.value, info_tool_node)
+        self.state_graph.add_node(Tools.CHECKOUT.value, checkout_tool_node)
+        self.state_graph.add_node(Tools.CART.value, cart_tool_node)
 
     def _addRoutingEdges(self):
         self.state_graph.add_edge(START, Routes.ROUTER.value)
@@ -91,34 +107,26 @@ class Agents:
                 Routes.CHAT.value: Routes.CHAT.value,
             })
 
-    def _addProductsEdges(self):
-        self.state_graph.add_conditional_edges(
-            Routes.PRODUCTS.value,
-            self.custom_route_tools(Tools.PRODUCTS.value),
-            {
-                Tools.PRODUCTS.value: Tools.PRODUCTS.value,
-                END: END,
-            }
-        )
-        self.state_graph.add_edge(Tools.PRODUCTS.value, Routes.PRODUCTS.value)
+    def _addToolsEdges(self):
+        self._addToolsEdge(Routes.PRODUCTS, Tools.PRODUCTS)
+        self._addToolsEdge(Routes.PRODUCT, Tools.PRODUCT)
+        self._addToolsEdge(Routes.INFO, Tools.INFO)
+        self._addToolsEdge(Routes.CHECKOUT, Tools.CHECKOUT)
+        self._addToolsEdge(Routes.CART, Tools.CART)
 
-    def _addProductEdges(self):
+    def _addToolsEdge(self, route: Routes, tool: Tools):
         self.state_graph.add_conditional_edges(
-            Routes.PRODUCT.value,
-            self.custom_route_tools(Tools.PRODUCT.value),
+            route.value,
+            self.custom_route_tools(tool.value),
             {
-                Tools.PRODUCT.value: Tools.PRODUCT.value,
+                tool.value: tool.value,
                 END: END,
             }
         )
-        self.state_graph.add_edge(Tools.PRODUCT.value, Routes.PRODUCT.value)
+        self.state_graph.add_edge(tool.value, route.value)
 
     def custom_route_tools(self, nodeName: str):
         def route_tools(state: GlobalState):
-            """
-            Use in the conditional_edge to route to the ToolNode if the last message
-            has tool calls. Otherwise, route to the end.
-            """
             if isinstance(state, list):
                 ai_message = state[-1]
             elif messages := state.get("messages", []):

@@ -1,5 +1,5 @@
-
 from decimal import Decimal
+from typing import List
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
@@ -12,7 +12,7 @@ class SearchInput(BaseModel):
 
 
 @tool("search_product", args_schema=SearchInput, return_direct=True)
-def search_product(id: str) -> str:
+def search_product(id: str) -> List[str]:
     """
     Retrive a product by its ID.
     """
@@ -27,7 +27,7 @@ def search_product(id: str) -> str:
         category="Fashion"
     )
 
-    return product.model_dump_json()
+    return [product.model_dump_json()]
 
 
-ProductTools = [search_product]
+Product_tools = [search_product]
