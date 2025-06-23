@@ -1,10 +1,20 @@
 import os
+
 from agents.agents import Agents
+from dbs.weaviate_client import WeaviateClient
+from dbs.mongo_client import MongoDBClient
 from server.server import Server
 from dotenv import load_dotenv
 from config.config import Config
 
 load_dotenv()
+
+mongoDb = MongoDBClient("uri", "db_name")
+weaviateDb = WeaviateClient(
+    http_host=os.getenv("WEAVIATE_HTTP_HOST") or "",
+    grpc_host=os.getenv("WEAVIATE_GRPC_HOST") or "",
+    api_key=os.getenv("WEAVIATE_API_KEY") or "",
+)
 
 config = Config(
     chat_model=os.getenv("CHAT_MODEL") or "",
