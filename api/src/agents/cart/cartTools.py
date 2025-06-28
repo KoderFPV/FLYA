@@ -8,7 +8,7 @@ from domain.cart import CartProduct
 @tool("get_cart_content", return_direct=True)
 def get_cart_content() -> List[str]:
     """
-    Retrive informations about current cart content.
+    Retrive current items in cart.
     """
 
     return [

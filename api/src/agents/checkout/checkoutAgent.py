@@ -1,4 +1,5 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
+from agents.checkout.checkoutTools import Checkout_tools
 from domain.state import GlobalState
 
 
@@ -18,4 +19,4 @@ class CheckoutAgent:
             temperature=1.0,
             max_retries=2,
             google_api_key=self.api_key,
-        )
+        ).bind_tools(Checkout_tools)
