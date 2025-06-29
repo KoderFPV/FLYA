@@ -1,7 +1,7 @@
-import { Chat } from "./chat/page"
+import { ChatWindow } from "./chat/components/chatWindow/ChatWindow";
 
 const Home = () => {
-  return <Chat />
+  return <ChatWindow />
 }
 
 export default Home;

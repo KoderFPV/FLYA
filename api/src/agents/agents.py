@@ -107,6 +107,8 @@ class Agents:
                 Routes.CHAT.value: Routes.CHAT.value,
             })
 
+    """ Helpers """
+
     def _addToolsEdges(self):
         self._addToolsEdge(Routes.PRODUCTS, Tools.PRODUCTS)
         self._addToolsEdge(Routes.PRODUCT, Tools.PRODUCT)

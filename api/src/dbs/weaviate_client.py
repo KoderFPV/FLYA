@@ -36,8 +36,10 @@ class WeaviateClient:
                 raise ConnectionError(
                     "Weaviate client is not ready after connection attempt.")
 
-            print(f"Successfully connected to Weaviate. HTTP Host: {
-                  self._http_host}, gRPC Host: {self._grpc_host}")
+            print(
+                "Successfully connected to Weaviate. "
+                f"HTTP Host: {self._http_host}, gRPC Host: {self._grpc_host}"
+            )
         except ConnectionError as e:
             print(f"Weaviate connection error: {e}")
             self._client = None

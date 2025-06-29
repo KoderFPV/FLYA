@@ -30,4 +30,13 @@ def search_product(id: str) -> List[str]:
     return [product.model_dump_json()]
 
 
+@tool("add_product_to_cart", return_direct=True)
+def add_product_to_cart(product_id: str, quantity: int) -> str:
+    """
+    Add a product to the shopping cart.
+    """
+    # This is a placeholder for the actual implementation
+    return f"Product {product_id} with quantity {quantity} added to cart."
+
+
 Product_tools = [search_product]

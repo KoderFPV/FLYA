@@ -1,6 +1,8 @@
 import { ChatWindow } from "./components/chatWindow/ChatWindow";
 
-export const Chat = () => {
+const Chat = () => {
   return <ChatWindow />
 }
+
+export default Chat;
 

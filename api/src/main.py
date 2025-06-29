@@ -1,5 +1,4 @@
 import os
-
 from agents.agents import Agents
 from dbs.weaviate_client import WeaviateClient
 from dbs.mongo_client import MongoDBClient
@@ -9,7 +8,10 @@ from config.config import Config
 
 load_dotenv()
 
-mongoDb = MongoDBClient("uri", "db_name")
+mongoDb = MongoDBClient(
+    os.getenv("MONGO_URL") or "",
+    os.getenv("MONGO_DATABASE") or "",
+)
 weaviateDb = WeaviateClient(
     http_host=os.getenv("WEAVIATE_HTTP_HOST") or "",
     grpc_host=os.getenv("WEAVIATE_GRPC_HOST") or "",
