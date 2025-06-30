@@ -1,4 +1,5 @@
 import os
+import sys
 from agents.agents import Agents
 from dbs.weaviate_client import WeaviateClient
 from dbs.mongo_client import MongoDBClient
@@ -7,6 +8,19 @@ from dotenv import load_dotenv
 from config.config import Config
 
 load_dotenv()
+
+new_path = "api/src"
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+absolute_new_path = os.path.join(script_dir, new_path)
+
+print(f"Adding {absolute_new_path} to Python path.")
+
+if absolute_new_path not in sys.path:
+    sys.path.insert(0, absolute_new_path)
+
+print("Python path configured to include /app/src.")
 
 mongoDb = MongoDBClient(
     os.getenv("MONGO_URL") or "",
