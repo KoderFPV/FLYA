@@ -2,7 +2,18 @@ import { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  devIndicators: {
+    position: 'top-right',
+  },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/chat',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 const withNextIntl = createNextIntlPlugin();

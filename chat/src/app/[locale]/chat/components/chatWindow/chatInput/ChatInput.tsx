@@ -11,6 +11,7 @@ export const ChatInput: React.FC<ChatInputProps> = (props) => {
   const t = useTranslations('Chat');
   const [inputValue, setInputValue] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   const handleSend = async () => {
     setIsLoading(true);
@@ -25,27 +26,40 @@ export const ChatInput: React.FC<ChatInputProps> = (props) => {
         await props.onSend(message);
 
         setInputValue('');
+        setTimeout(() => {
+          inputRef.current?.focus();
+
+        }, 10);
       }
     } catch (error) {
-      alert(t('chatInputError'));
+      alert(t('inputError'));
       console.error('Error sending message:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !isLoading) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
   return (
-    <div className={styles.chatInput}>
+    <div className={styles.chatInputContainer}>
       <input
+        ref={inputRef}
         type="text"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
-        placeholder={t('chatInputPlaceholder')}
-        className={styles.inputField}
+        onKeyDown={handleKeyDown}
+        placeholder={t('inputPlaceholder')}
+        className={styles.chatInputInput}
         disabled={isLoading}
       />
-      <button disabled={isLoading} onClick={handleSend} className={styles.sendButton}>
-        {t('chatInputSendButton')}
+      <button disabled={isLoading} onClick={handleSend} className={styles.chatInputSendButton}>
+        {t('sendButton')}
       </button>
     </div>
   );

@@ -166,3 +166,8 @@ a.secondary {
     filter: invert();
   }
 }
+
+
+.nextjs-toast {
+  top: 20px !important;
+}

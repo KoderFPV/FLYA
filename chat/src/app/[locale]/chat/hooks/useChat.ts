@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { sendAndReciveMessages } from "../actions/sendMessageAction";
 
 export const useChat = () => {
-  const t = useTranslations();
+  const t = useTranslations('Chat');
 
   const welcomeMessage: IMessage = {
     role: ROLE.ASSISTANT,

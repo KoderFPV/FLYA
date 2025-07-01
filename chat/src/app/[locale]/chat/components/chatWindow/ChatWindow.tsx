@@ -8,7 +8,7 @@ import { ChatMessages } from './chatMessages/ChatMessages';
 export const ChatWindow = () => {
   const { messages, sendMessage } = useChat();
 
-  return <div className={styles.chatWindow}>
+  return <div className={styles.chatWindowContainer}>
     <ChatMessages messages={messages} />
     <ChatInput onSend={sendMessage} />
   </div>

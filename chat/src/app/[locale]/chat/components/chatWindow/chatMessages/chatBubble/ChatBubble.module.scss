@@ -3,35 +3,36 @@
 }
 
 .bubble {
-  .user {
+  &User {
     background-color: #d1e7dd;
     color: #0f5132;
     border-radius: 10px;
     padding: 10px;
   }
 
-  .assistant {
+  &Assistant {
     background-color: #cfe2f3;
     color: #084298;
     border-radius: 10px;
     padding: 10px;
+    text-align: right;
   }
 
-  .hints {
+  &Hints {
     background-color: #fff3cd;
     color: #664d03;
     border-radius: 10px;
     padding: 10px;
   }
 
-  .error {
+  &Error {
     background-color: #f8d7da;
     color: #842029;
     border-radius: 10px;
     padding: 10px;
   }
 
-  .system {
+  &System {
     background-color: #e2e3e5;
     color: #495057;
     border-radius: 10px;
