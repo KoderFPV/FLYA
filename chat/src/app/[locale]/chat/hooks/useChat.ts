@@ -22,10 +22,8 @@ export const useChat = () => {
       ];
     });
 
-    const answear = await sendAndReciveMessages([...messages, {
-      role: ROLE.USER,
-      content: newMessage.content,
-    }])
+    const answear = await sendAndReciveMessages(newMessage.content, '1');
+
 
     setMessages(prevMessages => [
       ...prevMessages,

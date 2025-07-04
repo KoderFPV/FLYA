@@ -1,23 +1,37 @@
-from fastapi import FastAPI
-from starlette.responses import StreamingResponse
+import json
 
 from agents.agents import Agents
+from fastapi import APIRouter, FastAPI
+from pydantic import BaseModel
+from starlette.responses import StreamingResponse
+
+
+class ChatBody(BaseModel):
+    message: str
+    threadId: str
 
 
 class Server:
     def __init__(self, agents: Agents):
         self.app = FastAPI()
         self.agents = agents
+        self.router = APIRouter()
 
         @self.app.get("/")
         def read_root():
             return {"Hello": "World"}
 
-        @self.app.get("/chat")
-        async def chat(userInput: str, threadId: str):
+        @self.app.post("/chat")
+        async def chat(body: ChatBody):
             async def generate_updates():
-                async for update in self.agents.stream_graph_updates(userInput, threadId):
-                    yield update.encode("utf-8") + b"\n"
+                async for update in self.agents.stream_graph_updates(
+                    body.message, body.threadId
+                ):
+                    payload = {
+                        "message": update[0],
+                        "state": update[1],
+                    }
+                    yield (json.dumps(payload) + "\n").encode("utf-8")
 
             return StreamingResponse(generate_updates(), media_type="text/event-stream")
 

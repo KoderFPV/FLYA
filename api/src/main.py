@@ -1,11 +1,16 @@
 import os
 import sys
+
+import debugpy
 from agents.agents import Agents
-from dbs.weaviate_client import WeaviateClient
-from dbs.mongo_client import MongoDBClient
-from server.server import Server
-from dotenv import load_dotenv
 from config.config import Config
+from dbs.mongo_client import MongoDBClient
+from dbs.weaviate_client import WeaviateClient
+from dotenv import load_dotenv
+from server.server import Server
+
+debug_port = 5678
+debugpy.listen(("0.0.0.0", debug_port))
 
 load_dotenv()
 
@@ -37,13 +42,8 @@ config = Config(
     chat_api_key=os.getenv("CHAT_MODEL_API_KEY") or "",
 )
 
-agents = Agents(
-    config.chat_model,
-    config.chat_api_key
-)
+agents = Agents(config.chat_model, config.chat_api_key)
 
-server = Server(
-    agents=agents
-)
+server = Server(agents=agents)
 
 app = server.get_app()

@@ -2,6 +2,7 @@
   "Chat": {
     "welcomeMessage": "Witaj, jestem Artur!",
     "inputPlaceholder": "Czego szukasz przyjacielu?",
-    "sendButton": "Wyślij"
+    "sendButton": "Wyślij",
+    "responseError": "Przepraszam, nie mogę przetworzyć Twojej prośby. Spróbuj ponownie później."
   }
 }
