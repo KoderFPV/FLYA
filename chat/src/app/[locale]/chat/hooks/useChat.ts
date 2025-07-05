@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import { IMessage, ROLE } from "@/interfaces";
 import { useTranslations } from "next-intl";
-import { sendAndReciveMessages } from "../actions/sendMessageAction";
+import { IMessage, ROLE } from "@/interfaces";
+import { sendAndReceiveMessagesStream } from "../repositories/sendMessageAction";
 
 export const useChat = () => {
   const t = useTranslations('Chat');
@@ -22,15 +22,16 @@ export const useChat = () => {
       ];
     });
 
-    const answear = await sendAndReciveMessages(newMessage.content, '1');
-
-
-    setMessages(prevMessages => [
-      ...prevMessages,
-      ...answear,
-    ]);
+    for await (const data of sendAndReceiveMessagesStream(newMessage.content, '1',)) {
+      if (data.message !== messages?.at(-1).content) {
+        return;
+      }
+      setMessages(prevMessages => [
+        ...prevMessages,
+        { role: ROLE.ASSISTANT, content: data.message?.content || '' },
+      ]);
+    }
   };
-
 
   return {
     messages,

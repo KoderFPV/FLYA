@@ -2,6 +2,7 @@ import json
 
 from agents.agents import Agents
 from fastapi import APIRouter, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from starlette.responses import StreamingResponse
 
@@ -16,6 +17,19 @@ class Server:
         self.app = FastAPI()
         self.agents = agents
         self.router = APIRouter()
+
+        origins = [
+            "http://localhost",
+            "http://localhost:3000",
+        ]
+
+        self.app.add_middleware(
+            CORSMiddleware,
+            allow_origins=origins,
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
 
         @self.app.get("/")
         def read_root():
