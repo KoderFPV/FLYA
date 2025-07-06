@@ -1,6 +1,6 @@
 import asyncio
 from enum import Enum
-from typing import Any, AsyncGenerator, Dict, Tuple
+from typing import Any, AsyncGenerator, Dict, Tuple, cast
 
 from agents.cart.cartAgent import CartAgent
 from agents.cart.cartTools import Cart_tools
@@ -15,6 +15,7 @@ from agents.products.productsAgent import ProductsAgent
 from agents.products.productsTools import Products_tools
 from agents.router.routerAgent import RouterAgent, Routes
 from domain.state import GlobalState
+from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.constants import END, START
 from langgraph.graph import StateGraph
@@ -46,20 +47,27 @@ class Agents:
         self.graph = self._build_graph()
         self.graph.get_graph().draw_mermaid_png(output_file_path="graph.png")
 
-    async def stream_graph_updates(
+    async def async_graph_stream(
         self, user_input: str, threadId: str
     ) -> AsyncGenerator[Tuple[str, Dict[str, Any]], None]:
         loop = asyncio.get_running_loop()
 
-        def get_sync_stream_data():
-            config = {"configurable": {"thread_id": threadId}}
+        for content in await loop.run_in_executor(
+            None, self.stream_graph_updates(user_input, threadId)
+        ):
+            yield content
+            await asyncio.sleep(0.01)
 
+    def stream_graph_updates(self, user_input: str, threadId: str):
+        config = cast(RunnableConfig, {"configurable": {"thread_id": threadId}})
+        casted_config = cast(RunnableConfig, config)
+
+        def get_sync_stream_data():
             for event in self.graph.stream(
                 {"messages": [{"role": "user", "content": user_input}]},
-                config,
+                casted_config,
             ):
                 for value in event.values():
-                    print(value)
                     message = value["messages"][-1].content
 
                     state = {}
@@ -69,9 +77,7 @@ class Agents:
 
                     yield message, state
 
-        for content in await loop.run_in_executor(None, get_sync_stream_data):
-            yield content
-            await asyncio.sleep(0.01)
+        return get_sync_stream_data
 
     def _build_graph(self):
         memory = MemorySaver()

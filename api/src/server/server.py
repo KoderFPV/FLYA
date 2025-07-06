@@ -38,7 +38,7 @@ class Server:
         @self.app.post("/chat")
         async def chat(body: ChatBody):
             async def generate_updates():
-                async for update in self.agents.stream_graph_updates(
+                async for update in self.agents.async_graph_stream(
                     body.message, body.threadId
                 ):
                     payload = {
