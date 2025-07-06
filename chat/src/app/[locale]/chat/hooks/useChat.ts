@@ -8,6 +8,7 @@ export const useChat = () => {
   const t = useTranslations('Chat');
 
   const welcomeMessage: IMessage = {
+    id: "0",
     role: ROLE.ASSISTANT,
     content: t("welcomeMessage"),
   };
@@ -22,15 +23,38 @@ export const useChat = () => {
       ];
     });
 
+    let message: IMessage;
+
     for await (const data of sendAndReceiveMessagesStream(newMessage.content, '1',)) {
-      if (data.message !== messages?.at(-1).content) {
-        return;
+      if (message && data.message !== null) {
+        message.content += data.message.content;
       }
-      setMessages(prevMessages => [
-        ...prevMessages,
-        { role: ROLE.ASSISTANT, content: data.message?.content || '' },
-      ]);
+
+      if (!message && data.message !== null) {
+        message = {
+          id: data.message.id,
+          role: data.message.role,
+          content: data.message.content,
+        };
+      }
+
+      setMessages(prevMessages => {
+        if (data.message !== null) {
+          const existingMessageIndex = prevMessages.findIndex(m => m.id === message?.id);
+
+          if (existingMessageIndex !== -1) {
+            const updatedMessages = [...prevMessages];
+            updatedMessages[existingMessageIndex] = message;
+            return updatedMessages;
+          } else {
+            return [...prevMessages, message];
+          }
+        }
+        return prevMessages; // If data.message is null, return the previous messages unchanged
+      });
     }
+
+    console.log("Koniec");
   };
 
   return {

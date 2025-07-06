@@ -10,4 +10,5 @@ export enum ROLE {
 export interface IMessage {
   role: ROLE;
   content: string;
+  id: string;
 }

@@ -1,4 +1,5 @@
 import json
+from uuid import uuid4
 
 from agents.agents import Agents
 from fastapi import APIRouter, FastAPI
@@ -37,10 +38,15 @@ class Server:
 
         @self.app.post("/chat")
         async def chat(body: ChatBody):
+            messageId = str(uuid4())
+
             async def generate_updates():
                 async for update in self.agents.async_graph_stream(
-                    body.message, body.threadId
+                    body.message, body.threadId, messageId
                 ):
+                    if update[0] is None and update[1] is None:
+                        continue
+
                     payload = {
                         "message": update[0],
                         "state": update[1],

@@ -4,15 +4,16 @@ import { appFetchStream } from "@/services/fetch.service"; // albo appFetch z re
 const debug = true;
 
 interface StreamResponse {
-  message?: {
+  message: {
+    id: string;
     role: ROLE;
     content: string;
-  };
-  messages?: {
-    role: ROLE;
-    content: string;
-  };
-  state: "streaming" | "complete" | "error";
+  } | null;
+  state: {
+    routerState?: {
+      nextNode: string
+    }
+  } | null;
 }
 
 export async function* sendAndReceiveMessagesStream(
@@ -38,7 +39,8 @@ export async function* sendAndReceiveMessagesStream(
           role: ROLE.ASSISTANT,
           content: "No response body received.",
         },
-        state: "error"
+        state: {},
+        messageId: null,
       };
       return;
     }
@@ -79,7 +81,8 @@ export async function* sendAndReceiveMessagesStream(
         role: ROLE.ASSISTANT,
         content: "An error occurred while processing the stream.",
       },
-      state: "error"
+      state: {},
+      messageId: null,
     };
   }
 }

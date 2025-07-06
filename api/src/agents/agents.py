@@ -47,8 +47,8 @@ class Agents:
         self.graph.get_graph().draw_mermaid_png(output_file_path="graph.png")
 
     async def async_graph_stream(
-        self, user_input: str, threadId: str
-    ) -> AsyncGenerator[Tuple[str, Dict[str, Any]], None]:
+        self, user_input: str, threadId: str, messageId: str
+    ) -> AsyncGenerator[Tuple[Dict[str, str] | None, Dict[str, Any] | None], None]:
         config = cast(RunnableConfig, {"configurable": {"thread_id": threadId}})
         messages = {"messages": [{"role": "user", "content": user_input}]}
 
@@ -56,7 +56,7 @@ class Agents:
             messages, config, stream_mode=["messages", "updates"]
         ):
             if event == "messages":
-                yield self._handle_message_event(metadata)
+                yield self._handle_message_event(metadata, messageId)
 
             if event == "updates":
                 yield self._handle_updates_event(metadata)
@@ -150,16 +150,21 @@ class Agents:
 
         return route_tools
 
-    def _handle_message_event(self, metadata: Any):
+    def _handle_message_event(self, metadata: Any, messageId: str):
         aiMessage = cast(AIMessage, metadata[0])
         content = cast(str, aiMessage.content)
 
-        return content, {}
+        if content == "" or content == "chat":
+            return None, None
+
+        return {"id": messageId, "role": "assistant", "content": content}, None
 
     def _handle_updates_event(self, metadata: Any):
         state = {}
 
         if "router" in metadata:
             state["routerState"] = metadata["router"]["routerState"]
+        else:
+            return None, None
 
-        return "", state
+        return None, state
