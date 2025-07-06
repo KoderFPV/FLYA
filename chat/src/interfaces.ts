@@ -12,3 +12,9 @@ export interface IMessage {
   content: string;
   id: string;
 }
+
+export interface IChatState {
+  routerState?: {
+    nextNode: string;
+  };
+}

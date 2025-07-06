@@ -8,10 +8,30 @@
 
   .messages {
     height: 100%;
-
   }
 
   .input {
+  }
 
+  &Border {
+    &Blue {
+      border-color: blue;
+      border-width: 4px;
+    }
+
+    &Red {
+      border-color: red;
+      border-width: 4px;
+    }
+
+    &Green {
+      border-color: green;
+      border-width: 4px;
+    }
+
+    &Yellow {
+      border-color: yellow;
+      border-width: 4px;
+    }
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { IMessage, ROLE } from "@/interfaces";
+import { IChatState, IMessage, ROLE } from "@/interfaces";
 import { sendAndReceiveMessagesStream } from "../repositories/sendMessageAction";
 
 export const useChat = () => {
@@ -14,6 +14,7 @@ export const useChat = () => {
   };
 
   const [messages, setMessages] = useState<IMessage[]>([welcomeMessage]);
+  const [state, setState] = useState<IChatState>({});
 
   const sendMessage = async (newMessage: IMessage) => {
     setMessages(prevMessages => {
@@ -26,6 +27,15 @@ export const useChat = () => {
     let message: IMessage;
 
     for await (const data of sendAndReceiveMessagesStream(newMessage.content, '1',)) {
+      if (data.state) {
+        setState(prevState => {
+          return {
+            ...prevState,
+            ...data.state,
+          };
+        });
+      }
+
       if (message && data.message !== null) {
         message.content += data.message.content;
       }
@@ -54,10 +64,10 @@ export const useChat = () => {
       });
     }
 
-    console.log("Koniec");
   };
 
   return {
+    state,
     messages,
     sendMessage,
   }
