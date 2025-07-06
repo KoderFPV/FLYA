@@ -15,6 +15,7 @@ from agents.products.productsAgent import ProductsAgent
 from agents.products.productsTools import Products_tools
 from agents.router.routerAgent import RouterAgent, Routes
 from domain.state import GlobalState
+from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.constants import END, START
@@ -39,9 +40,7 @@ class Agents:
 
         self._addNodes()
         self._addToolNodes()
-
         self._addRoutingEdges()
-
         self._addToolsEdges()
 
         self.graph = self._build_graph()
@@ -50,34 +49,17 @@ class Agents:
     async def async_graph_stream(
         self, user_input: str, threadId: str
     ) -> AsyncGenerator[Tuple[str, Dict[str, Any]], None]:
-        loop = asyncio.get_running_loop()
-
-        for content in await loop.run_in_executor(
-            None, self.stream_graph_updates(user_input, threadId)
-        ):
-            yield content
-            await asyncio.sleep(0.01)
-
-    def stream_graph_updates(self, user_input: str, threadId: str):
         config = cast(RunnableConfig, {"configurable": {"thread_id": threadId}})
-        casted_config = cast(RunnableConfig, config)
+        messages = {"messages": [{"role": "user", "content": user_input}]}
 
-        def get_sync_stream_data():
-            for event in self.graph.stream(
-                {"messages": [{"role": "user", "content": user_input}]},
-                casted_config,
-            ):
-                for value in event.values():
-                    message = value["messages"][-1].content
+        async for event, metadata in self.graph.astream(
+            messages, config, stream_mode=["messages", "updates"]
+        ):
+            if event == "messages":
+                yield self._handle_message_event(metadata)
 
-                    state = {}
-
-                    if "routerState" in value:
-                        state["routerState"] = value["routerState"]
-
-                    yield message, state
-
-        return get_sync_stream_data
+            if event == "updates":
+                yield self._handle_updates_event(metadata)
 
     def _build_graph(self):
         memory = MemorySaver()
@@ -144,7 +126,7 @@ class Agents:
     def _addToolsEdge(self, route: Routes, tool: Tools):
         self.state_graph.add_conditional_edges(
             route.value,
-            self.custom_route_tools(tool.value),
+            self._custom_route_tools(tool.value),
             {
                 tool.value: tool.value,
                 END: END,
@@ -152,7 +134,7 @@ class Agents:
         )
         self.state_graph.add_edge(tool.value, route.value)
 
-    def custom_route_tools(self, nodeName: str):
+    def _custom_route_tools(self, nodeName: str):
         def route_tools(state: GlobalState):
             if isinstance(state, list):
                 ai_message = state[-1]
@@ -167,3 +149,17 @@ class Agents:
             return END
 
         return route_tools
+
+    def _handle_message_event(self, metadata: Any):
+        aiMessage = cast(AIMessage, metadata[0])
+        content = cast(str, aiMessage.content)
+
+        return content, {}
+
+    def _handle_updates_event(self, metadata: Any):
+        state = {}
+
+        if "router" in metadata:
+            state["routerState"] = metadata["router"]["routerState"]
+
+        return "", state
