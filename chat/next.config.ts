@@ -3,7 +3,7 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const nextConfig: NextConfig = {
   devIndicators: {
-    position: 'top-right',
+    position: 'bottom-right',
   },
   async redirects() {
     return [
