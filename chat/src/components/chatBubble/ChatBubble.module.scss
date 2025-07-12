@@ -1,0 +1,11 @@
+.chatBubble {
+  &User {
+    background: $chatBubbleUserBg;
+    color: white;
+  }
+
+  &AI {
+    background: $chatBubbleAIBg;
+    color: $textColor;
+  }
+}

@@ -1,9 +1,36 @@
 .chatInput {
   &Mobile {
     display: flex;
+    width: 100%;
+    border-radius: 25px;
+    background: white;
+    justify-content: center;
+    border-top: 1px solid $border;
+    padding: 16px;
 
     @include media-breakpoint-up(md) {
       display: none;
+    }
+
+    &Textarea {
+      width: 80%;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: $textColor;
+      resize: none;
+      background: white;
+      border: 1px solid $border;
+      border-radius: 25px;
+      font-size: $h1Size;
+      padding: 8px;
+      padding-left: 16px;
+
+      &::placeholder {
+        color: $placeholderColor;
+        font-weight: 400;
+        padding-left: 8px;
+      }
     }
   }
 
@@ -11,15 +38,17 @@
     display: none;
     width: 100%;
     max-width: 760px;
-    border: 1px solid $border;
     border-radius: 25px;
-    padding: 12px;
+    padding: 16px;
+    background: white;
+    box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
 
     @include media-breakpoint-up(md) {
       display: flex;
     }
 
-    &Input {
+    &Textarea {
       border: none;
       outline: none;
       padding-left: 16px;
@@ -27,9 +56,11 @@
       color: $textColor;
       width: 100%;
       resize: none;
+      background: white;
 
       &::placeholder {
         color: $placeholderColor;
+        font-weight: 400;
       }
     }
   }
