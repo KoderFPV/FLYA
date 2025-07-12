@@ -1,0 +1,36 @@
+.chatInput {
+  &Mobile {
+    display: flex;
+
+    @include media-breakpoint-up(md) {
+      display: none;
+    }
+  }
+
+  &Desktop {
+    display: none;
+    width: 100%;
+    max-width: 760px;
+    border: 1px solid $border;
+    border-radius: 25px;
+    padding: 12px;
+
+    @include media-breakpoint-up(md) {
+      display: flex;
+    }
+
+    &Input {
+      border: none;
+      outline: none;
+      padding-left: 16px;
+      background: transparent;
+      color: $textColor;
+      width: 100%;
+      resize: none;
+
+      &::placeholder {
+        color: $placeholderColor;
+      }
+    }
+  }
+}
