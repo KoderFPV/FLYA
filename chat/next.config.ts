@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
   sassOptions: {
     prependData: `
         @import 'src/styles/variables.module.scss';
+        @import 'src/styles/breakpoints.module.scss';
+        @import 'src/styles/functions.module.scss';
       `,
   }
 };
