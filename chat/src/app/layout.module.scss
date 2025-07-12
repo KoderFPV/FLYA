@@ -1,0 +1,14 @@
+.layout {
+  background-color: $pageBg;
+  font-size: $fontSize;
+
+  &Wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    &Content {
+      flex-grow: 1;
+    }
+  }
+}

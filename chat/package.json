@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "classname": "^0.0.0",
     "classnames": "^2.5.1",
     "next": "15.3.3",
     "next-intl": "^4.1.0",
@@ -25,8 +24,6 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.11",
     "typescript": "^5"
   }
 }

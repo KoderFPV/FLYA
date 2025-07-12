@@ -1,0 +1,14 @@
+.footer {
+  background: $footerBackground;
+  border: 1px solid $footerBorder;
+  padding: 21px 50px;
+  display: flex;
+  justify-content: space-between;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  color: $lightGrayText;
+
+  &Right {
+    display: flex;
+    gap: 16px;
+  }
+}

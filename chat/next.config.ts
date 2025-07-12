@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  sassOptions: {
+    prependData: `
+        @import 'src/styles/variables.module.scss';
+      `,
+  }
 };
 
 const withNextIntl = createNextIntlPlugin();

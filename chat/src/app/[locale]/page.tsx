@@ -1,5 +1,7 @@
 const Chat = () => {
-  return null;
+  return <>
+    Hej
+  </>;
 }
 
 export default Chat;
