@@ -19,6 +19,38 @@ export const ChatWindow = () => {
     {
       role: ROLE.ASSISTANT,
       message: "Sure! The weather today is sunny with a high of 25°C."
+    },
+    {
+      role: ROLE.USER,
+      message: "Great! Thanks for the info."
+    },
+    {
+      role: ROLE.ASSISTANT,
+      message: "You're welcome! If you have any more questions, feel free to ask."
+    },
+    {
+      role: ROLE.USER,
+      message: "What about the weekend?"
+    },
+    {
+      role: ROLE.ASSISTANT,
+      message: "The weekend looks promising with clear skies and temperatures around 22°C."
+    },
+    {
+      role: ROLE.USER,
+      message: "Sounds perfect! I'll plan a picnic."
+    },
+    {
+      role: ROLE.ASSISTANT,
+      message: "That sounds like a great idea! Enjoy your picnic!"
+    },
+    {
+      role: ROLE.USER,
+      message: "Thank you! Bye!"
+    },
+    {
+      role: ROLE.ASSISTANT,
+      message: "Goodbye! Have a wonderful day!"
     }
   ]
   return <div className={styles.chatWindow}>

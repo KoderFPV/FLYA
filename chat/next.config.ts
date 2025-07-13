@@ -2,9 +2,7 @@ import { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
 const nextConfig: NextConfig = {
-  devIndicators: {
-    position: 'bottom-right',
-  },
+  devIndicators: false,
   // async redirects() {
   //   return [
   //     {

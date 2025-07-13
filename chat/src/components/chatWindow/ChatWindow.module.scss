@@ -5,5 +5,10 @@
   display: flex;
   gap: 24px;
   flex-direction: column;
-  width: $chatWidth;
+  height: 1px; // Ensures the flex container grows to fill available space, and keep scroll
+  overflow: auto;
+
+  @include media-breakpoint-up(md) {
+    width: $chatWidth;
+  }
 }
