@@ -1,17 +1,23 @@
-
+import styles from "./ChatBubble.module.scss";
 import { ROLE } from "@/interfaces";
+import classNames from "classnames";
 
 interface ChatBubbleProps {
   message: string;
-  type: ROLE;
+  role: ROLE;
 }
 
 export const ChatBubble: React.FC<ChatBubbleProps> = (props) => {
-  const { message, type } = props;
+  const bubbleClass = {
+    [ROLE.ASSISTANT]: styles.chatBubbleAI,
+    [ROLE.USER]: styles.chatBubbleUser,
+  }[props.role]
 
   return (
-    <div className={`chat-bubble ${type}`}>
-      <p>{message}</p>
+    <div className={classNames(bubbleClass)}>
+      <div>{props.message}</div>
     </div>
   );
-};
+
+
+}

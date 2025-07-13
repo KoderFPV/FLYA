@@ -5,15 +5,15 @@ const nextConfig: NextConfig = {
   devIndicators: {
     position: 'bottom-right',
   },
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/chat',
-        permanent: false,
-      },
-    ];
-  },
+  // async redirects() {
+  //   return [
+  //     {
+  //       source: '/',
+  //       destination: '/chat',
+  //       permanent: false,
+  //     },
+  //   ];
+  // },
   sassOptions: {
     prependData: `
         @import 'src/styles/variables.module.scss';

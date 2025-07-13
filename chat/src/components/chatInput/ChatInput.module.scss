@@ -37,7 +37,7 @@
   &Desktop {
     display: none;
     width: 100%;
-    max-width: 760px;
+    max-width: $chatWidth;
     border-radius: 25px;
     padding: 16px;
     background: white;
