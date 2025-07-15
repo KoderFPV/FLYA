@@ -11,9 +11,11 @@ class MongoDBClient:
     def _connect(self, mongo_uri: str):
         try:
             self._client = MongoClient(mongo_uri)
-            self._client.admin.command('ping')
-            print(f"Successfully connected to MongoDB: {mongo_uri}, "
-                  f"database: {self._db_name}")
+            self._client.admin.command("ping")
+            print(
+                f"Successfully connected to MongoDB: {mongo_uri}, "
+                f"database: {self._db_name}"
+            )
         except ConnectionFailure as e:
             print(f"MongoDB connection error: {e}")
             self._client = None

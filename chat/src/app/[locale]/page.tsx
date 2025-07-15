@@ -1,13 +1,8 @@
-import styles from "./Chat.module.scss";
-import { ChatInput } from "@/components/chatInput/ChatInput";
-import { ChatWindow } from "@/components/chatWindow/ChatWindow";
+import { ChatClient } from "./client";
 
-const Chat = () => {
-  return <div className={styles.chat}>
-    <ChatWindow />
-    <ChatInput />
-  </div>;
+const ChatServer = () => {
+  return <ChatClient />
 }
 
-export default Chat;
+export default ChatServer;
 
