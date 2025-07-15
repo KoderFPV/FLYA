@@ -1,7 +1,7 @@
 import { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.API_URL;
 
 const nextConfig: NextConfig = {
   devIndicators: false,
