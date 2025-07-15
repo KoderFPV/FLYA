@@ -58,8 +58,6 @@ services:
     build:
       context: ./chat
       dockerfile: Dockerfile
-      args:
-        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
     ports:
       - "6004:3000"
     depends_on:
@@ -67,8 +65,6 @@ services:
     restart: on-failure
     env_file:
       - ./.env
-    environment:
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
   nextjs_cms:
     build:
