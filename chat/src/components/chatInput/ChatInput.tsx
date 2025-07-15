@@ -10,7 +10,7 @@ interface ChatInputProps {
 
 export interface InputProps {
   handleChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  sendMessage: (newMessage: IMessage) => Promise<void>;
+  sendMessage: () => Promise<void>;
 
 }
 

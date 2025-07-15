@@ -1,6 +1,7 @@
 from typing import Annotated
-from pydantic import BaseModel, Field
+
 from domain.product import Product
+from pydantic import BaseModel, Field
 
 
 class ProductState(BaseModel):
