@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   weaviate:
@@ -6,12 +6,12 @@ services:
       - --host
       - 0.0.0.0
       - --port
-      - '8080'
+      - "8080"
       - --scheme
       - http
     image: semitechnologies/weaviate:1.24.2
     ports:
-      - "8083:8080"
+      - "6000:8080"
       - "50053:50051"
     volumes:
       - weaviate_data:/var/lib/weaviate
@@ -22,7 +22,7 @@ services:
   mongodb:
     image: mongo:6.0
     ports:
-      - "27018:27017"
+      - "6001:27017"
     volumes:
       - mongo_data:/data/db
     restart: always
@@ -32,7 +32,7 @@ services:
   ollama:
     image: ollama/ollama:latest
     ports:
-      - "11435:11434"
+      - "6002:11434"
     volumes:
       - ollama_data:/root/.ollama
     pull_policy: always
@@ -45,7 +45,7 @@ services:
       context: ./api
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "6003:8000"
     depends_on:
       - weaviate
       - mongodb
@@ -59,7 +59,7 @@ services:
       context: ./chat
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "6004:3000"
     depends_on:
       - fastapi_app
     restart: on-failure
@@ -71,7 +71,7 @@ services:
       context: ./cms
       dockerfile: Dockerfile
     ports:
-      - "3001:3000"
+      - "6005:3000"
     depends_on:
       - fastapi_app
     restart: on-failure
