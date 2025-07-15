@@ -24,7 +24,7 @@ export const useChat = () => {
       ];
     });
 
-    let message: IMessage;
+    let message!: IMessage;
 
     for await (const data of sendAndReceiveMessagesStream(newMessage.content, '1',)) {
       if (data.state) {

@@ -36,11 +36,11 @@ export async function* sendAndReceiveMessagesStream(
     if (!response.body) {
       yield {
         message: {
+          id: "0",
           role: ROLE.ASSISTANT,
           content: "No response body received.",
         },
         state: {},
-        messageId: null,
       };
       return;
     }
@@ -78,11 +78,11 @@ export async function* sendAndReceiveMessagesStream(
     console.error("Stream error:", error);
     yield {
       message: {
+        id: "0",
         role: ROLE.ASSISTANT,
         content: "An error occurred while processing the stream.",
       },
       state: {},
-      messageId: null,
     };
   }
 }
