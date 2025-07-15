@@ -1,7 +1,7 @@
 import { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
-const API_URL = "http://fastapi_app:6003";
+const API_URL = "http://fastapi_app:8000";
 
 const nextConfig: NextConfig = {
   devIndicators: false,
