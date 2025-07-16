@@ -1,7 +1,6 @@
-
-from langchain_google_genai import ChatGoogleGenerativeAI
 from agents.cart.cartTools import Cart_tools
 from domain.state import GlobalState
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 
 class CartAgent:
@@ -17,7 +16,7 @@ class CartAgent:
     def setup_llm(self):
         self.llm = ChatGoogleGenerativeAI(
             model=self.model,
-            temperature=1.0,
+            temperature=0,
             max_retries=2,
             google_api_key=self.api_key,
         ).bind_tools(Cart_tools)

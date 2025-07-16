@@ -11,6 +11,7 @@ export const ChatInputDesktop: React.FC<InputProps> = (props) => {
       className={styles.chatInputDesktopTextarea}
       placeholder="Ask about products or your order..."
       onChange={props.handleChange}
+      value={props.message?.content || ''}
       onKeyDown={(e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();

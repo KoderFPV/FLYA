@@ -10,6 +10,7 @@ export const ChatInputMobile: React.FC<InputProps> = (props) => {
       className={styles.chatInputMobileTextarea}
       placeholder="Ask about products or your order..."
       onChange={props.handleChange}
+      value={props.message?.content || ''}
       onKeyDown={(e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();

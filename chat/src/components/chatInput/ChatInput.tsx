@@ -11,7 +11,7 @@ interface ChatInputProps {
 export interface InputProps {
   handleChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   sendMessage: () => Promise<void>;
-
+  message: IMessage | undefined;
 }
 
 export const ChatInput: React.FC<ChatInputProps> = (props) => {
@@ -32,7 +32,7 @@ export const ChatInput: React.FC<ChatInputProps> = (props) => {
       return;
     }
 
-    await props.sendMessage(message);
+    void props.sendMessage(message);
 
     setMessage(undefined);
   }
@@ -40,6 +40,7 @@ export const ChatInput: React.FC<ChatInputProps> = (props) => {
   const inputProps = {
     handleChange,
     sendMessage,
+    message,
   }
 
   return <>
