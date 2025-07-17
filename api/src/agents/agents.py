@@ -1,4 +1,3 @@
-import asyncio
 from enum import Enum
 from typing import Any, AsyncGenerator, Dict, Tuple, cast
 
@@ -13,6 +12,8 @@ from agents.product.productAgent import ProductAgent
 from agents.product.productTools import Product_tools
 from agents.products.productsAgent import ProductsAgent
 from agents.products.productsTools import Products_tools
+from agents.registration.registerationTools import Registration_tools
+from agents.registration.registrationAgent import RegistrationAgent
 from agents.router.routerAgent import RouterAgent, Routes
 from domain.state import GlobalState
 from langchain_core.messages import AIMessage
@@ -24,6 +25,7 @@ from langgraph.prebuilt import ToolNode
 
 
 class Tools(Enum):
+    REGISTRATION = "registration_tools"
     PRODUCTS = "products_tools"
     PRODUCT = "product_tools"
     INFO = "info_tools"
@@ -68,6 +70,10 @@ class Agents:
     def _addNodes(self):
         self.state_graph.add_node(Routes.ROUTER.value, self.router.create)
         self.state_graph.add_node(
+            Routes.REGISTRATION.value,
+            RegistrationAgent(self.model, self.api_key).create,
+        )
+        self.state_graph.add_node(
             Routes.PRODUCTS.value, ProductsAgent(self.model, self.api_key).create
         )
         self.state_graph.add_node(
@@ -87,12 +93,14 @@ class Agents:
         )
 
     def _addToolNodes(self):
+        registration_tools_node = ToolNode(tools=Registration_tools)
         products_tools_node = ToolNode(tools=Products_tools)
         product_tool_node = ToolNode(tools=Product_tools)
         info_tool_node = ToolNode(tools=Info_tools)
         checkout_tool_node = ToolNode(tools=Checkout_tools)
         cart_tool_node = ToolNode(tools=Cart_tools)
 
+        self.state_graph.add_node(Tools.REGISTRATION.value, registration_tools_node)
         self.state_graph.add_node(Tools.PRODUCTS.value, products_tools_node)
         self.state_graph.add_node(Tools.PRODUCT.value, product_tool_node)
         self.state_graph.add_node(Tools.INFO.value, info_tool_node)
@@ -105,6 +113,7 @@ class Agents:
             Routes.ROUTER.value,
             self.router.router_conditional_edge,
             {
+                Routes.REGISTRATION.value: Routes.REGISTRATION.value,
                 Routes.PRODUCT.value: Routes.PRODUCT.value,
                 Routes.PRODUCTS.value: Routes.PRODUCTS.value,
                 Routes.CART.value: Routes.CART.value,
@@ -117,6 +126,7 @@ class Agents:
     """ Helpers """
 
     def _addToolsEdges(self):
+        self._addToolsEdge(Routes.REGISTRATION, Tools.REGISTRATION)
         self._addToolsEdge(Routes.PRODUCTS, Tools.PRODUCTS)
         self._addToolsEdge(Routes.PRODUCT, Tools.PRODUCT)
         self._addToolsEdge(Routes.INFO, Tools.INFO)
@@ -124,6 +134,7 @@ class Agents:
         self._addToolsEdge(Routes.CART, Tools.CART)
 
     def _addToolsEdge(self, route: Routes, tool: Tools):
+        print(f"Adding tool edge for {route.value} with tool {tool.value}")
         self.state_graph.add_conditional_edges(
             route.value,
             self._custom_route_tools(tool.value),
@@ -154,7 +165,17 @@ class Agents:
         aiMessage = cast(AIMessage, metadata[0])
         content = cast(str, aiMessage.content)
 
+        node_names = [route.value for route in Routes] + [tool.value for tool in Tools]
+        if content in node_names:
+            return None, None
+
+        if hasattr(aiMessage, "tool_calls") and len(aiMessage.tool_calls) > 0:
+            return None, None
+
         if content == "" or content == "chat":
+            return None, None
+
+        if hasattr(aiMessage, "tool_call_id") and aiMessage.tool_call_id:
             return None, None
 
         return {"id": messageId, "role": "assistant", "content": content}, None

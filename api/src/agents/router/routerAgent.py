@@ -4,10 +4,10 @@ from agents.router.routerPrompts import RouterPrompts
 from domain.state import GlobalState
 from langchain_core.messages import SystemMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langgraph.constants import END
 
 
 class Routes(Enum):
+    REGISTRATION = "registration"
     PRODUCT = "product"
     PRODUCTS = "products"
     CART = "cart"
@@ -49,8 +49,7 @@ class RouterAgent:
         router_state_dict = state["routerState"]
         next_node = router_state_dict["nextNode"]
         shouldRedirect = (
-            next_node in [
-                e.value for e in Routes] and next_node != Routes.ROUTER.value
+            next_node in [e.value for e in Routes] and next_node != Routes.ROUTER.value
         )
 
         if shouldRedirect:

@@ -1,5 +1,7 @@
-from agents.product.productTools import Product_tools
+from agents.registration.registerationTools import Registration_tools
+from agents.registration.registrationPrompt import RegistrationPrompts
 from domain.state import GlobalState
+from langchain_core.messages import SystemMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 
@@ -7,6 +9,7 @@ class RegistrationAgent:
     def __init__(self, model: str, api_key: str):
         self.model = model
         self.api_key = api_key
+        self.prompts = RegistrationPrompts()
 
         self.setup_llm()
 
@@ -19,4 +22,4 @@ class RegistrationAgent:
             temperature=0,
             max_retries=2,
             google_api_key=self.api_key,
-        ).bind_tools(Product_tools)
+        ).bind_tools(Registration_tools)
