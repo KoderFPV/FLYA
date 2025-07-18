@@ -8,6 +8,8 @@ from agents.checkout.checkoutAgent import CheckoutAgent
 from agents.checkout.checkoutTools import Checkout_tools
 from agents.info.infoAgent import InfoAgent
 from agents.info.infoTools import Info_tools
+from agents.login.loginAgent import LoginAgent
+from agents.login.loginTools import Login_tools
 from agents.product.productAgent import ProductAgent
 from agents.product.productTools import Product_tools
 from agents.products.productsAgent import ProductsAgent
@@ -26,6 +28,7 @@ from langgraph.prebuilt import ToolNode
 
 class Tools(Enum):
     REGISTRATION = "registration_tools"
+    LOGIN = "login_tools"
     PRODUCTS = "products_tools"
     PRODUCT = "product_tools"
     INFO = "info_tools"
@@ -74,6 +77,10 @@ class Agents:
             RegistrationAgent(self.model, self.api_key).create,
         )
         self.state_graph.add_node(
+            Routes.LOGIN.value,
+            LoginAgent(self.model, self.api_key).create,
+        )
+        self.state_graph.add_node(
             Routes.PRODUCTS.value, ProductsAgent(self.model, self.api_key).create
         )
         self.state_graph.add_node(
@@ -94,6 +101,7 @@ class Agents:
 
     def _addToolNodes(self):
         registration_tools_node = ToolNode(tools=Registration_tools)
+        login_tools_node = ToolNode(tools=Login_tools)
         products_tools_node = ToolNode(tools=Products_tools)
         product_tool_node = ToolNode(tools=Product_tools)
         info_tool_node = ToolNode(tools=Info_tools)
@@ -101,6 +109,7 @@ class Agents:
         cart_tool_node = ToolNode(tools=Cart_tools)
 
         self.state_graph.add_node(Tools.REGISTRATION.value, registration_tools_node)
+        self.state_graph.add_node(Tools.LOGIN.value, login_tools_node)
         self.state_graph.add_node(Tools.PRODUCTS.value, products_tools_node)
         self.state_graph.add_node(Tools.PRODUCT.value, product_tool_node)
         self.state_graph.add_node(Tools.INFO.value, info_tool_node)
@@ -114,6 +123,7 @@ class Agents:
             self.router.router_conditional_edge,
             {
                 Routes.REGISTRATION.value: Routes.REGISTRATION.value,
+                Routes.LOGIN.value: Routes.LOGIN.value,
                 Routes.PRODUCT.value: Routes.PRODUCT.value,
                 Routes.PRODUCTS.value: Routes.PRODUCTS.value,
                 Routes.CART.value: Routes.CART.value,
@@ -127,6 +137,7 @@ class Agents:
 
     def _addToolsEdges(self):
         self._addToolsEdge(Routes.REGISTRATION, Tools.REGISTRATION)
+        self._addToolsEdge(Routes.LOGIN, Tools.LOGIN)
         self._addToolsEdge(Routes.PRODUCTS, Tools.PRODUCTS)
         self._addToolsEdge(Routes.PRODUCT, Tools.PRODUCT)
         self._addToolsEdge(Routes.INFO, Tools.INFO)

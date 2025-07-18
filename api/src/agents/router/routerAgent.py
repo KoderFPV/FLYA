@@ -1,13 +1,14 @@
 from enum import Enum
 
+from agents.baseAgent import BaseAgent
 from agents.router.routerPrompts import RouterPrompts
 from domain.state import GlobalState
 from langchain_core.messages import SystemMessage
-from langchain_google_genai import ChatGoogleGenerativeAI
 
 
 class Routes(Enum):
     REGISTRATION = "registration"
+    LOGIN = "login"
     PRODUCT = "product"
     PRODUCTS = "products"
     CART = "cart"
@@ -17,15 +18,14 @@ class Routes(Enum):
     CHAT = "chat"
 
 
-class RouterAgent:
+class RouterAgent(BaseAgent):
     def __init__(self, model: str, api_key: str):
-        self.model = model
-        self.api_key = api_key
+        super().__init__(model, api_key)
         self.prompts = RouterPrompts()
 
-        self.setup_llm()
-
     def create(self, state: GlobalState):
+        if self.llm is None:
+            raise ValueError("LLM is not initialized.")
         systemMessage = [SystemMessage(content=self.prompts.systemPrompt)]
 
         response = self.llm.invoke(
@@ -36,14 +36,6 @@ class RouterAgent:
             "messages": state["messages"],
             "routerState": {"nextNode": response.content},
         }
-
-    def setup_llm(self):
-        self.llm = ChatGoogleGenerativeAI(
-            model=self.model,
-            temperature=0,
-            max_retries=2,
-            google_api_key=self.api_key,
-        )
 
     def router_conditional_edge(self, state: GlobalState):
         router_state_dict = state["routerState"]
@@ -58,3 +50,6 @@ class RouterAgent:
         else:
             print(f"Invalid next node: {next_node}. Defaulting to chat.")
             return Routes.CHAT.value
+
+    def get_tools(self):
+        return []

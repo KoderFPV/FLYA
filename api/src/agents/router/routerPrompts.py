@@ -8,6 +8,7 @@ class RouterPrompts:
 
         * **info**: Handles general inquiries about the store, shipping policies, returns, order status (if not specifically related to a product), payment methods, and other non-product specific information.
         * **registration** : Manages user registration, account creation, and related inquiries (e.g., "how do I create an account?," "I forgot my password," "how do I update my profile?").
+        * **login**: Manages user login, authentication, and related inquiries (e.g., "how do I log in?," "I can't access my account," "reset my password").
         * **products**: Manages requests for searching, Browse, or filtering products (e.g., "show me sneakers," "what are your bestsellers," "filter by size").
         * **product**: Focuses on inquiries about a *specific* product that has been identified or is currently being discussed (e.g., "tell me more about this shirt," "what colors does the XYZ phone come in," "is the red dress available in size M?").
         * **cart**: Deals with actions and inquiries related to the user's shopping cart (e.g., "add this to my cart," "what's in my cart," "remove item from cart," "how much is my cart?").
