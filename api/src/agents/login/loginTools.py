@@ -20,7 +20,7 @@ def login(email: str, password: str) -> str:
     if not email or not password:
         return "Email and password are required for login."
 
-    if email == "artur.slomowski@gmail.com" and password == "Koder!23!123":
+    if email == "artur.slomowski@gmail.com" and password == "Koder!23!23":
         return f"User logged in successfully with email: {email}"
 
     return "Invalid email or password. Please try again."
